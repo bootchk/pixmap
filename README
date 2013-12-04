@@ -1,0 +1,23 @@
+
+Gimp Pixmap Package
+
+Copyright 2013 Lloyd Konneker
+
+Licensed under GPLv3
+
+
+This is unreleased work in progress.
+
+
+About
+=====
+
+This is a Python package for use by Gimp plugins.
+
+It puts a different API on a Gimp drawable.
+
+It buffers a Gimp drawable (you read a Gimp drawable into it, modify it, and flush it back to Gimp.)
+
+It offers subscripting of pixels by Coord objects instead of tuples.
+
+It returns pixels as Python arrays (1D) of pixelel values (i.e. an array of 4 bytes of RGBA, or an array of one byte of mask.)
