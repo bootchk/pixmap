@@ -207,7 +207,7 @@ class Pixmap(object):
     assert len(value) == self.bpp
     # address arithmetic
     pixelIndex = ( key.y * self.width + key.x ) * self.bpp
-    assert isinstance(pixelIndex, int) and pixelIndex > 0, str(pixelIndex)
+    assert isinstance(pixelIndex, int) and pixelIndex >= 0, str(pixelIndex)
     self.pixelelArray[pixelIndex:pixelIndex + self.bpp] = value
 
 
