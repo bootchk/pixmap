@@ -20,4 +20,4 @@ It buffers a Gimp drawable (you read a Gimp drawable into it, modify it, and flu
 
 It offers subscripting of pixels by Coord objects instead of tuples.
 
-It returns pixels as Python arrays (1D) of pixelel values (i.e. an array of 4 bytes of RGBA, or an array of one byte of mask.)
+It returns pixels as Python arrays (1D) of pixelel values (i.e. an array of 4 ints of RGBA, or an array of one int of mask.)

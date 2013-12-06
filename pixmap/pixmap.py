@@ -19,6 +19,7 @@ class Pixmap(object):
   - known dimension attributes (width, height, bpp)
   - clipping test method
   - selection convenience methods
+  - iterator protocol
   - visibility test method (TODO)
   '''
   
@@ -40,7 +41,7 @@ class Pixmap(object):
     in flush(), it sets the region dirty and writes directly to the image (not undoable.)
     '''
     # TODO pass dirty, shadow
-    self.region = drawable.get_pixel_rgn(0, 0, drawable.width, drawable.height, True, False)  # False, False)
+    self.region = drawable.get_pixel_rgn(0, 0, drawable.width, drawable.height, False, False)  # False, False)
     
     '''
     Responsibility: known dimensions.  These are exposed to public.
@@ -61,6 +62,7 @@ class Pixmap(object):
     
     self.selectionPixmapMask = self._getSelectionMask(drawable)
   
+    self.indexLimit = self.width * self.height
     
   
   def flush(self, bounds):
@@ -193,7 +195,7 @@ class Pixmap(object):
     assert key is not None
     # TODO this includes the alpha
     pixelIndex = ( key.y * self.width + key.x ) * self.bpp
-    assert isinstance(pixelIndex, int) and pixelIndex > 0, str(pixelIndex)
+    assert isinstance(pixelIndex, int) and pixelIndex >= 0, str(pixelIndex)
     return self.pixelelArray[pixelIndex:pixelIndex + self.bpp]
     
   def __setitem__(self, key, value):
@@ -209,6 +211,20 @@ class Pixmap(object):
     self.pixelelArray[pixelIndex:pixelIndex + self.bpp] = value
 
 
+  '''
+  Python iterator protocol.   Supporting:   'for pixel in pixmap:'
+  '''
+  def __iter__(self):
+    return self._iterator()
+  
+  def _iterator(self):
+    '''
+    Yields a Pixel (an array of ints.)
+    '''
+    for i in range(0, self.indexLimit):
+      yield self.pixelelArray[i:i + self.bpp]
+      
+      
   """
   def copySelectionMask(self):
     return PixmapMask(width=self.width, initializer=self.selectionPixelelArray)
