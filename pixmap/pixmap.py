@@ -184,6 +184,8 @@ class Pixmap(object):
   For now, the range of values for Pixelels is [0,255] inclusive.
   You should not assume it will always be so.
   But you can assume that they will always be positive integers.
+  
+  See below, you can't use this to assign individual pixelels!!!!
   '''
   
   def __getitem__(self, key):
@@ -209,6 +211,25 @@ class Pixmap(object):
     pixelIndex = ( key.y * self.width + key.x ) * self.bpp
     assert isinstance(pixelIndex, int) and pixelIndex >= 0, str(pixelIndex)
     self.pixelelArray[pixelIndex:pixelIndex + self.bpp] = value
+
+
+  '''
+  Get/set pixelel.
+  
+  Note that Pixmap[Coord][0] = 1 does not work, 
+  since Pixmap[Coord] returns a new array foo, then foo[0] = 1 assigns to the new array, not to self.
+  '''
+  def setPixelel(self, pixelelID, value):
+    pixel = self[pixelelID.coord]
+    # pixel is an array, modify one of it's pixelels
+    pixel[pixelelID.pixelelIndex] = value
+    # Reassign pixel to self
+    self[pixelelID.coord]=pixel
+
+
+  def getPixelel(self, pixelelID):
+    return self[pixelelID.coord][pixelelID.pixelelIndex]
+
 
 
   '''
