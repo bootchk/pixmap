@@ -39,9 +39,12 @@ class Pixmap(object):
     '''
     Note the parameters for "dirty, shadow" = True, False means that:
     in flush(), it sets the region dirty and writes directly to the image (not undoable.)
+    Dirty is about undo?
+    Shadow is about double buffering?
+    Here we use neither.
     '''
     # TODO pass dirty, shadow
-    self.region = drawable.get_pixel_rgn(0, 0, drawable.width, drawable.height, False, False)  # False, False)
+    self.region = drawable.get_pixel_rgn(0, 0, drawable.width, drawable.height, False, False)
     
     '''
     Responsibility: known dimensions.  These are exposed to public.
@@ -72,8 +75,9 @@ class Pixmap(object):
     # Write buffer back to PixelRgn. Convert from integers to string as required by gimp.PixelRgn
     self.region[0:self.width, 0:self.height] = self.pixelelArray.tostring()
     
-    # Canonical to make GIMP display updated drawable
-    self.parentDrawable.merge_shadow(True)  # Flush shadow region to region
+    # Canonical steps to make GIMP display updated drawable
+    ## merge_shadow only necessary if get_pixel_rgn(..., useShadow=True)
+    ##self.parentDrawable.merge_shadow(True)  # Flush shadow region to region
     self.parentDrawable.update(bounds.ulx, bounds.uly, bounds.width, bounds.height)
     # Don't gimp.displays_flush() because that depends on PyGIMP
   
