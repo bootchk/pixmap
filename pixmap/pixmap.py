@@ -5,6 +5,9 @@ from array import array
 
 from pixmapMask import PixmapMask
 from bounds import Bounds
+from coord import Coord
+from pixelelID import PixelelID
+
 
 from gimpfu import *
 
@@ -249,7 +252,22 @@ class Pixmap(object):
     for i in range(0, self.indexLimit):
       yield self.pixelelArray[i:i + self.bpp]
       
-      
+  
+  
+  def pixelelIDsAt(self, key):
+    '''
+    Iterator yielding PixelelID's of pixelels at key.
+    (For use with getPixelel(), setPixelel() when you want to save a PixelelID.)
+    
+    There is no Pixelel class.
+    A Pixmap is an array of Pixel is an array of pixelel values, and PixelelID identifies elements.
+    '''
+    assert isinstance(key, Coord)
+    for i in range(0, self.bpp):
+      yield PixelelID(key, i)
+    
+    
+    
   """
   def copySelectionMask(self):
     return PixmapMask(width=self.width, initializer=self.selectionPixelelArray)
