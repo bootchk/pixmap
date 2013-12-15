@@ -79,8 +79,12 @@ class PixmapMask(object):
       
   def getNulledCopy(self):
     ''' Null mask (everywhere unmasked) same size as self. '''
-    return PixmapMask(width=self.width, initializer=[PixmapMask.GIMP_TOTALLY_UNMASKED for i in range(0, len(self.self.pixelelArray))])
+    return self.getInitializedCopy(PixmapMask.GIMP_TOTALLY_UNMASKED)
   
+  
+  def getInitializedCopy(self, value):
+    ''' Mask initialized to value. '''
+    return PixmapMask(width=self.width, initializer=[value for i in range(0, len(self.pixelelArray))])
   
   '''
   Assuming self is a selection mask, methods for determining selection
@@ -96,4 +100,32 @@ class PixmapMask(object):
   def isSomewhatSelected(self, coords):
     ''' Is totally or partially selected. '''
     return not self.isTotallyNotSelected(coords)
+  
+  
+  '''
+  Responsibility: subscripting.
+  
+  Subscripting methods returning one integer (not an array, as for Pixmap)
+  Unlike Pixmaps, you CAN use this to assign individual pixelels!!!!
+  See further comments at Pixmap.  
+  '''
+  
+  def __getitem__(self, key):
+    '''
+    int 
+    '''
+    assert key is not None
+    pixelIndex = ( key.y * self.width + key.x )
+    assert isinstance(pixelIndex, int) and pixelIndex >= 0, str(pixelIndex)
+    return self.pixelelArray[pixelIndex]
+  
+    
+  def __setitem__(self, key, value):
+    '''
+    Set one pixelel from a value which is an int.
+    '''
+    pixelIndex = ( key.y * self.width + key.x )
+    assert value >= 0 and value <= 255
+    assert isinstance(pixelIndex, int) and pixelIndex >= 0, str(pixelIndex)
+    self.pixelelArray[pixelIndex] = value
       
