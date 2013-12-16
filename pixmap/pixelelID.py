@@ -13,5 +13,12 @@ class PixelelID(object):
     self.coord = coord
     self.pixelelIndex = pixelelIndex
 
+  def __repr__(self):
+    ''' 
+    Strict representation: as a string that will recreate self as an object when eval()'ed.
+    Does NOT represent self as tuple.
+    '''
+    return "PixelelID(" + str(self.coord) + "," + str(self.pixelelIndex) + ")"
+  
   def __eq__(self, other):
     return self.coord == other.coord and self.pixelelIndex == other.pixelelIndex
