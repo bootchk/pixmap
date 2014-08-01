@@ -73,12 +73,12 @@ class PixmapMask(object):
     Invert self.
     '''
     for pixelelIndex in range(0, len(self)):
-      # TODO is this the right arithmetic?
       self.pixelelArray[pixelelIndex] = 255 - self.pixelelArray[pixelelIndex]
+    # assert every pixelel still in range [0,255]
       
       
-  def getNulledCopy(self):
-    ''' Null mask (everywhere unmasked) same size as self. '''
+  def getUnmaskedCopy(self):
+    ''' Everywhere unmasked copy of self. '''
     return self.getInitializedCopy(PixmapMask.GIMP_TOTALLY_UNMASKED)
   
   
