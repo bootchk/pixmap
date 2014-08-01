@@ -6,18 +6,33 @@ Copyright 2013 Lloyd Konneker
 Licensed under GPLv3
 
 
-This is unreleased work in progress.
-
 
 About
 =====
 
 This is a Python package for use by Gimp plugins.
 
-It puts a different API on a Gimp drawable.
-
 It buffers a Gimp drawable (you read a Gimp drawable into it, modify it, and flush it back to Gimp.)
 
-It offers subscripting of pixels by Coord objects instead of tuples.
+It puts a different API on a Gimp drawable.
+The API is more object oriented, having these classes:
+- Pixmap
+- PixmapMask
+- Coord
+- Bounds
+- PixelelID
 
-It returns pixels as Python arrays (1D) of pixelel values (i.e. an array of 4 ints of RGBA, or an array of one int of mask.)
+It offers subscripting of Pixmap (yielding a pixel) by Coord objects instead of tuples.
+
+Subscripting returns pixels as Python arrays (1D) of pixelel values.
+(i.e. an array of 4 ints of RGBA, or an array of one int of mask.)
+That is, Pixel is not a class.
+
+There is no Pixelel class (they are just ints.)
+See Pixmap.pixelelIDsAt(coord) method, an iterator yielding PixelelIDs at a coord.
+See getters and setters of pixelels by PixeleID.
+
+A PixelelID is a 3D coordinate of a pixelel (a coord, and an index of pixelel in pixel at coord.)
+
+Since a Pixmap is basically a GIMP drawable (which has a selection mask),
+a Pixmap also knows (has-a) selection mask.
