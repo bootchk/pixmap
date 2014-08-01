@@ -1,7 +1,7 @@
-'''
-'''
 
 from array import array
+
+from gimpfu import *
 
 from pixmapMask import PixmapMask
 from bounds import Bounds
@@ -9,7 +9,7 @@ from coord import Coord
 from pixelelID import PixelelID
 
 
-from gimpfu import *
+
 
 
 class Pixmap(object):
@@ -23,6 +23,8 @@ class Pixmap(object):
   - clipping test method
   - selection convenience methods
   - iterator protocol
+  - know selection mask and get related masks
+  - know bounds of selection
   - visibility test method (TODO)
   '''
   
@@ -152,9 +154,52 @@ class Pixmap(object):
   def invertSelection(self):
     self.selectionPixmapMask.invert()
     
-  def selectionMask(self):
-    return self.selectionPixmapMask
 
+
+  '''
+  Responsibility:
+  know selection mask and get related masks
+  '''
+  def selectionMask(self):
+    '''
+    Self's selection mask.
+    
+    !!! Not a copy and subject to side effect via invertSelection()
+    '''
+    return self.selectionPixmapMask
+  
+  def copySelectionMask(self):
+    " Same as above, but a copy. "
+    return self.selectionMask.copy()
+    
+  def getNullMask(self):
+    " Mask same size as self, but totally selecting ALL pixels. "
+    return self.selectionMask.getNullCopy()
+  
+    
+  def getFullMask(self):
+    " Mask same size as self, but selecting NO pixels. "
+    return self.selectionMask.getFullCopy()
+
+
+
+  '''
+  Responsibility: know bounds of selection.
+  '''
+
+  def selectionBounds(self):
+    '''
+    Bounds or None.
+    
+    !!! upgrading from tuple to a Bounds object.
+    
+    !!! Interpretation from unmasked to selected.
+    '''
+    if self.selectionMask.isTotalMask():
+      return None
+    else:
+      self.selectionMask.computeUnmaskedBounds()
+      return Bounds(*self.selectionMask.unmaskedBounds())
 
 
   '''
