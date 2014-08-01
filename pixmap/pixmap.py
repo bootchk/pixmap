@@ -170,16 +170,16 @@ class Pixmap(object):
   
   def copySelectionMask(self):
     " Same as above, but a copy. "
-    return self.selectionMask.copy()
+    return self.selectionMask().copy()
     
   def getNullMask(self):
     " Mask same size as self, but totally selecting ALL pixels. "
-    return self.selectionMask.getNullCopy()
+    return self.selectionMask().getNullCopy()
   
     
   def getFullMask(self):
     " Mask same size as self, but selecting NO pixels. "
-    return self.selectionMask.getFullCopy()
+    return self.selectionMask().getFullCopy()
 
 
 
@@ -195,10 +195,10 @@ class Pixmap(object):
     
     !!! Interpretation from unmasked to selected.
     '''
-    if self.selectionMask.isTotalMask():
+    if self.selectionMask().isTotalMask():
       return None
     else:
-      self.selectionMask.computeUnmaskedBounds()
+      self.selectionMask().computeUnmaskedBounds()
       return Bounds(*self.selectionMask.unmaskedBounds())
 
 
