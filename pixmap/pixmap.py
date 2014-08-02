@@ -1,5 +1,5 @@
 
-from gimpfu import *
+# from gimpfu import *  # for assertions
 
 from arraymap import ArrayMap
 from pixmapMask import PixmapMask
@@ -31,7 +31,7 @@ class Pixmap(ArrayMap):
     
     Also initialize a PixmapMask for the drawable's selection .
     '''
-    assert isinstance(drawable, gimp.Drawable)
+    # assert isinstance(drawable, gimp.Drawable)
     self.parentDrawable = drawable
     
     '''
@@ -49,14 +49,20 @@ class Pixmap(ArrayMap):
     self.region = drawable.get_pixel_rgn(0, 0, drawable.width, drawable.height, False, False)
     # Retain region for later use
     
+    # Get mask from GIMP first
+    mask = self._getSelectionMask(drawable)
+    
     super(ArrayMap, self).__init__(width=drawable.width,
                                    height=drawable.height,
                                    bpp=self.region.bpp,
                                    initializer=self.region[0:drawable.width, 0:drawable.height],
-                                   mask=self._getSelectionMask(drawable)
+                                   mask=mask
                                    )
     # superclass creates pixelelArray etc.
     assert self.pixelelArray is not None
+    
+    # One selection Pixelel (byte) per Pixel.
+    assert len(self.selectionMask()) * self.bpp ==  len(self.pixelelArray)  
   
   
   def flush(self, bounds):
@@ -84,7 +90,12 @@ class Pixmap(ArrayMap):
     
   
   def _getSelectionMask(self, drawable):
-    ''' Drawable's selection mask as a PixmapMask. '''
+    ''' 
+    Drawable's selection mask as a PixmapMask. 
+    
+    !!! This is called before self's base class is initialized,
+    so certain attributes of self are not known yet: use attributes from drawable.
+    '''
     image = drawable.image
     selection = image.selection # returns a channel
     print("Selection channel, width, height", selection, selection.width, selection.height)
@@ -96,7 +107,7 @@ class Pixmap(ArrayMap):
     selectionRgn = selection.get_pixel_rgn(0, 0, selection.width, selection.height, False, False)
     print("Selection region, x, y, width, height", selectionRgn.x, selectionRgn.y, selectionRgn.w, selectionRgn.h)
     print("First pixel of selection region", str(ord(selectionRgn[0,0])))
-    '''o
+    '''
     Note that many selections (especially grown selections) might have rounded corners
     and thus have 0 for the first pixel, which may be unexpected to casual glance.
     '''
@@ -115,10 +126,12 @@ class Pixmap(ArrayMap):
     Note the selection channel is never offset from the image (has same origin.)
     The drawable is offset within the selection channel.
     '''
-    print("Selection array w,h", self.width, self.height)
-    selectionPixmapMask = PixmapMask(width=self.width, initializer=selectionRgn[offsets[0]:offsets[0]+self.width,
-                                                       offsets[1]:offsets[1]+self.height])
-    assert len(selectionPixmapMask) * self.bpp ==  len(self.pixelelArray)  # One selection Pixelel (byte) per Pixel.                                      
+    width = drawable.width
+    height = drawable.height
+    print("Selection array w,h", width, height)
+    selectionPixmapMask = PixmapMask(width=drawable.width, 
+                                     initializer=selectionRgn[offsets[0]:offsets[0]+width,
+                                                       offsets[1]:offsets[1]+height])                                      
     print("Size of selection channel is ", len(selectionPixmapMask))
     # selectionPixmapMask.dump()
     return selectionPixmapMask
