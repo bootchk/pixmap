@@ -1,9 +1,5 @@
-'''
-'''
 
 from array import array
-
-
 
 
 class PixmapMask(object):
@@ -13,6 +9,57 @@ class PixmapMask(object):
   where the values are as defined in Gimp.
   
   Usually one-to-one with another Pixmap holding color.
+  
+  
+  Examples:
+  To test: 
+  cd to the enclosing directory
+  python -m doctest -v pixmapMask.py
+  
+  >>> from coord import Coord
+  >>> from copy import copy
+  
+  >>> totalMask = PixmapMask(2, [0, 0, 0, 0])  # 2x2 total mask
+  >>> totalMask.isTotalMask()
+  True
+  
+  >>> totalMask.isTotallyMasked(Coord(0,0))
+  True
+  >>> totalMask.isTotallyUnmasked(Coord(0,0))
+  False
+  >>> totalMask.isSomewhatSelected(Coord(0,0))
+  False
+  
+  >>> invertedTotalMask = copy(totalMask)
+  >>> invertedTotalMask.invert()
+  >>> invertedTotalMask.isTotalMask()
+  False
+  
+  >>> len(totalMask)
+  4
+  
+  >>> invertedTotalMask.isTotallyMasked(Coord(0,0))
+  False
+  >>> invertedTotalMask.isTotallyUnmasked(Coord(0,0))
+  True
+  
+  Subscripting works
+  >>> invertedTotalMask[Coord(0,0)]
+  255
+  
+  Mask value of 1 is partially masked and partially selected
+  >>> partialMask = copy(invertedTotalMask)
+  >>> partialMask[Coord(0,0)] = 1
+  
+  partialMask has one pixel (0,0) that is partially masked, all other pixels fully masked
+  >>> partialMask.isTotallyMasked(Coord(0,0))
+  False
+  >>> partialMask.maskValueIsUnmasked(Coord(0,0))
+  True
+  >>> partialMask.isSomewhatSelected(Coord(0,0))
+  True
+  >>> partialMask.isSomewhatSelected(Coord(1,1))
+  True
   '''
   
   # Same values that Gimp uses, here as class attributes
@@ -34,10 +81,13 @@ class PixmapMask(object):
   
   
   ''' Subscripting '''
-  def isMasked(self, coords):
+  def isTotallyMasked(self, coords):
     return self._maskValueFromCoords(coords) == PixmapMask.GIMP_TOTALLY_MASKED
+  
+  def isTotallyUnmasked(self, coords):
+    return self._maskValueFromCoords(coords) == PixmapMask.GIMP_TOTALLY_UNMASKED
     
-  def isUnmasked(self, coords):
+  def isPartiallyUnmasked(self, coords):
     return self.maskValueIsUnmasked(self._maskValueFromCoords(coords))
     
   def maskValueIsUnmasked(self, value):
@@ -53,19 +103,23 @@ class PixmapMask(object):
     pixelIndex = coords.y * self.width + coords.x
     return self.pixelelArray[pixelIndex]
   
+  
   ''' Properties '''
   def isTotalMask(self):
-    ''' Are any pixels unmasked? EG is there a selection? '''
+    ''' 
+    Are any pixels fully or partially unmasked? 
+    Under interpretation of selection: is there a selection? 
+    '''
     for pixelel in self.pixelelArray:
       if self.maskValueIsUnmasked(pixelel):
-        return True # some pixel is unmasked to some extent
-    return False  # all pixels are totally masked
+        return False # some pixel is unmasked to some extent
+    return True  # all pixels are totally masked
   
   
   def dump(self):
-    print "PixmapMask:"
+    print("PixmapMask:")
     for value in self.pixelelArray:
-      print value 
+      print(value)
       
   
   def invert(self):
@@ -84,7 +138,7 @@ class PixmapMask(object):
   
   def getInitializedCopy(self, value):
     ''' Mask initialized to value. '''
-    return PixmapMask(width=self.width, initializer=[value for i in range(0, len(self.pixelelArray))])
+    return PixmapMask(width=self.width, initializer=[value for _ in range(0, len(self.pixelelArray))])
   
   '''
   Assuming self is a selection mask, methods for determining selection
@@ -128,4 +182,8 @@ class PixmapMask(object):
     assert value >= 0 and value <= 255
     assert isinstance(pixelIndex, int) and pixelIndex >= 0, str(pixelIndex)
     self.pixelelArray[pixelIndex] = value
-      
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

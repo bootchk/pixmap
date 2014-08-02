@@ -66,7 +66,7 @@ class Pixmap(object):
     See python docs for module array.
     '''
     self.pixelelArray = array("B", self.region[0:self.width, 0:self.height])
-    print "Size of pixelelArray", len(self.pixelelArray)
+    print("Size of pixelelArray", len(self.pixelelArray))
     
     self.selectionPixmapMask = self._getSelectionMask(drawable)
   
@@ -101,15 +101,15 @@ class Pixmap(object):
     ''' Drawable's selection mask as a PixmapMask. '''
     image = drawable.image
     selection = image.selection # returns a channel
-    print "Selection channel, width, height", selection, selection.width, selection.height
+    print("Selection channel, width, height", selection, selection.width, selection.height)
     assert selection.bpp == 1
     '''
     Get region for selection channel
     F, F : read only, and not need a shadow
     '''
     selectionRgn = selection.get_pixel_rgn(0, 0, selection.width, selection.height, False, False)
-    print "Selection region, x, y, width, height", selectionRgn.x, selectionRgn.y, selectionRgn.w, selectionRgn.h
-    print "First pixel of selection region", str(ord(selectionRgn[0,0]))
+    print("Selection region, x, y, width, height", selectionRgn.x, selectionRgn.y, selectionRgn.w, selectionRgn.h)
+    print("First pixel of selection region", str(ord(selectionRgn[0,0])))
     '''o
     Note that many selections (especially grown selections) might have rounded corners
     and thus have 0 for the first pixel, which may be unexpected to casual glance.
@@ -120,8 +120,8 @@ class Pixmap(object):
     Drawable may be offset within image and thus within selection channel.
     '''
     offsets = drawable.offsets
-    print "Channel offsets", selection.offsets
-    print "Drawable offsets, width, height", drawable.offsets, drawable.width, drawable.height
+    print("Channel offsets", selection.offsets)
+    print("Drawable offsets, width, height", drawable.offsets, drawable.width, drawable.height)
     '''
     Read selection mask into array, but only size of drawable, and offset.
     Thus, we can use same coords in selectionPixmapMask as we use in the drawable pixelelArray
@@ -129,11 +129,11 @@ class Pixmap(object):
     Note the selection channel is never offset from the image (has same origin.)
     The drawable is offset within the selection channel.
     '''
-    print "Selection array w,h", self.width, self.height
+    print("Selection array w,h", self.width, self.height)
     selectionPixmapMask = PixmapMask(width=self.width, initializer=selectionRgn[offsets[0]:offsets[0]+self.width,
                                                        offsets[1]:offsets[1]+self.height])
     assert len(selectionPixmapMask) * self.bpp ==  len(self.pixelelArray)  # One selection Pixelel (byte) per Pixel.                                      
-    print "Size of selection channel is ", len(selectionPixmapMask)
+    print("Size of selection channel is ", len(selectionPixmapMask))
     # selectionPixmapMask.dump()
     return selectionPixmapMask
   
