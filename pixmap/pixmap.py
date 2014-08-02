@@ -52,17 +52,17 @@ class Pixmap(ArrayMap):
     # Get mask from GIMP first
     mask = self._getSelectionMask(drawable)
     
-    super(ArrayMap, self).__init__(width=drawable.width,
-                                   height=drawable.height,
-                                   bpp=self.region.bpp,
-                                   initializer=self.region[0:drawable.width, 0:drawable.height],
-                                   mask=mask
-                                   )
-    # superclass creates pixelelArray etc.
+    super(Pixmap, self).__init__(width=drawable.width,
+                                 height=drawable.height,
+                                 bpp=self.region.bpp,
+                                 initializer=self.region[0:drawable.width, 0:drawable.height],
+                                 mask=mask
+                                 )
+    # superclass ArrayMap creates pixelelArray etc.
     assert self.pixelelArray is not None
     
     # One selection Pixelel (byte) per Pixel.
-    assert len(self.selectionMask()) * self.bpp ==  len(self.pixelelArray)  
+    assert len(self.selectionMask()) * self.bpp == len(self.pixelelArray)  
   
   
   def flush(self, bounds):
