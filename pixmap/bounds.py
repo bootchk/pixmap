@@ -60,6 +60,10 @@ class Bounds():
   >>> a.width
   3
   
+  __repr__
+  >>> a
+  Bounds(1,1,3,3)
+  
   >>> d=Bounds(1,1, 1,1)
   >>> d=Bounds(1,1, 0,0)
   Traceback (most recent call last):
@@ -93,7 +97,7 @@ class Bounds():
     '''
     return cls(ulx, uly, lrx-1, lry-1)
     
-    
+  # TODO isNull or isEmpty
     
   def isInBounds(self, coord):
     return coord.x >= self.ulx and coord.x <= self.lrx \
@@ -112,6 +116,10 @@ class Bounds():
     return Bounds(0,0,self.width-1, self.height-1)
     
   def __repr__(self):
-    return "Bounds(" + str(self.ulx) + "," + str(self.uly) + "," + str(self.lrx) + "," + str(self.lry) + \
-      ", w" + str(self.width) + ", h" + str(self.height) + ")"
+    " Strict repr: string when execed will reproduce. "
+    return "Bounds(" + str(self.ulx) + "," + str(self.uly) + "," + str(self.lrx) + "," + str(self.lry) + ")"
+  
+    """ Not strict
+      + ", w" + str(self.width) + ", h" + str(self.height) + ")"
+    """
 

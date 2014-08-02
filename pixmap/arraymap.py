@@ -37,9 +37,12 @@ class ArrayMap(object):
   >>> map.selectionMask()   #doctest: +ELLIPSIS
   <pixmapMask.PixmapMask object at 0x...>
   
-  Knows its selection mask and its bounds
+  Knows bounds and bounds of selection mask
+  >>> map.bounds()
+  Bounds(0,0,2,2)
+  
   >>> map.selectionBounds()
-  Bounds(0,0,0,0, w1, h1)
+  Bounds(0,0,0,0)
   
   
   Clipping is by rect dimensions, regardless of mask.
@@ -93,9 +96,6 @@ class ArrayMap(object):
   
     self.indexLimit = self.width * self.height
     
-    
-  
-  
   
   
   '''
@@ -146,9 +146,16 @@ class ArrayMap(object):
 
 
   '''
-  Responsibility: know bounds of selection.
+  Responsibility: know bounds of self and selection.
   '''
-
+  
+  def bounds(self):
+    '''
+    Bounds: our notion of bounds, different from GIMP bounds.
+    '''
+    return Bounds(0, 0, self.width, self.height)
+    
+    
   def selectionBounds(self):
     '''
     Bounds or None.

@@ -65,7 +65,7 @@ class Pixmap(ArrayMap):
     assert len(self.selectionMask()) * self.bpp == len(self.pixelelArray)  
   
   
-  def flush(self, bounds):
+  def flush(self, bounds=None):
     '''
     Ask GIMP to display portion of self (flush buffered changes to Gimp.)
     '''
@@ -75,8 +75,16 @@ class Pixmap(ArrayMap):
     # Canonical steps to make GIMP display updated drawable
     ## merge_shadow only necessary if get_pixel_rgn(..., useShadow=True)
     ##self.parentDrawable.merge_shadow(True)  # Flush shadow region to region
+    if bounds is None:
+      # Update entire
+      bounds = self.bounds()
+    # else update only the passed bounds
     self.parentDrawable.update(bounds.ulx, bounds.uly, bounds.width, bounds.height)
-    # Don't gimp.displays_flush() because that depends on PyGIMP
+    
+    '''
+    Don't gimp.displays_flush() because that depends on PyGIMP.
+    Caller must call that.
+    '''
   
   
   def flushAll(self):
