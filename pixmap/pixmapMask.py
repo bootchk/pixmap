@@ -14,7 +14,6 @@ class PixmapMask(object):
   Usually one-to-one with another Pixmap holding color.
   
   
-  Examples:
   To test: 
   cd to the enclosing directory
   python -m doctest -v pixmapMask.py
