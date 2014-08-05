@@ -96,6 +96,8 @@ class ArrayMap(object):
   
     self.indexLimit = self.width * self.height
     
+    " Ensure "
+    assert self.indexLimit * self.bpp == len(self.pixelelArray), "pixelelArray is fully initialized"
   
   
   '''

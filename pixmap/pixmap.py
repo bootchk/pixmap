@@ -19,6 +19,7 @@ Use of a Python array instead of GIMP is well-known for GIMP plugins.
 class Pixmap(ArrayMap):
   ''' 
   Adapter for gimp.PixelRgn class.
+  Gives a Map API.
   
   Extends ArrayMap by these responsibilities:
   - buffering (initialize from and flush to a Gimp drawable)
@@ -58,6 +59,7 @@ class Pixmap(ArrayMap):
                                  initializer=self.region[0:drawable.width, 0:drawable.height],
                                  mask=mask
                                  )
+    " Ensure "
     # superclass ArrayMap creates pixelelArray etc.
     assert self.pixelelArray is not None
     
